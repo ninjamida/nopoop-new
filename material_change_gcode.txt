@@ -1,0 +1,95 @@
+{if toolchange_count > 1}
+SET_VELOCITY_LIMIT ACCEL=[travel_acceleration]
+{if !purge_in_prime_tower && flush_length > 0}
+_NOPOOP_MODE ENABLE=0
+T[next_extruder]
+_GOTO_TRASH
+M104 S[new_filament_temp]
+SET_FAN_SPEED FAN=fanM106 SPEED=0
+_DISABLE_SENSOR
+; FLUSH_START
+{if flush_length_1 == 0}
+G1 E2 F{old_filament_e_feedrate / 2}
+G1 E{flush_length + old_retract_length_toolchange - 2} F{old_filament_e_feedrate}
+SET_FAN_SPEED FAN=fanM106 SPEED=1
+G4 P4000
+M400
+G1 E-1 F{old_filament_e_feedrate / 2}
+_SBROS_TRASH
+SET_FAN_SPEED FAN=fanM106 SPEED=0
+{else}
+G1 E2 F{old_filament_e_feedrate / 2}
+G1 E{flush_length_1 + old_retract_length_toolchange - 2} F{old_filament_e_feedrate}
+SET_FAN_SPEED FAN=fanM106 SPEED=1
+G4 P4000
+M400
+G1 E-1 F{old_filament_e_feedrate / 2}
+_SBROS_TRASH
+SET_FAN_SPEED FAN=fanM106 SPEED=0
+{if flush_length_2 > 0}
+_GOTO_TRASH_STANDARD
+G1 E2 F{old_filament_e_feedrate / 2}
+G1 E{flush_length_2 - 1} F{old_filament_e_feedrate}
+SET_FAN_SPEED FAN=fanM106 SPEED=1
+G4 P4000
+M400
+G1 E-1 F{old_filament_e_feedrate / 2}
+_SBROS_TRASH
+SET_FAN_SPEED FAN=fanM106 SPEED=0
+{endif}
+{if flush_length_3 > 0}
+_GOTO_TRASH_STANDARD
+G1 E2 F{old_filament_e_feedrate / 2}
+G1 E{flush_length_3 - 1} F{old_filament_e_feedrate}
+SET_FAN_SPEED FAN=fanM106 SPEED=1
+G4 P4000
+M400
+G1 E-1 F{old_filament_e_feedrate / 2}
+_SBROS_TRASH
+SET_FAN_SPEED FAN=fanM106 SPEED=0
+{endif}
+{if flush_length_4 > 0}
+_GOTO_TRASH_STANDARD
+G1 E2 F{old_filament_e_feedrate / 2}
+G1 E{flush_length_4 - 1} F{old_filament_e_feedrate}
+SET_FAN_SPEED FAN=fanM106 SPEED=1
+G4 P4000
+M400
+G1 E-1 F{old_filament_e_feedrate / 2}
+_SBROS_TRASH
+SET_FAN_SPEED FAN=fanM106 SPEED=0
+{endif}
+{endif}
+{if 1 - old_retract_length_toolchange < -2}
+G1 E-2 F{old_filament_e_feedrate / 2}
+G1 E{1 - old_retract_length_toolchange + 2} F{old_filament_e_feedrate}
+{endif}
+{if 1 - old_retract_length_toolchange >= -2 and 1 - old_retract_length_toolchange < 0}
+G1 E{1 - old_retract_length_toolchange} F{old_filament_e_feedrate / 2}
+{endif}
+{if 1 - old_retract_length_toolchange > 0 and 1 - old_retract_length_toolchange <= 2}
+G1 E{1 - old_retract_length_toolchange} F{old_filament_e_feedrate / 2}
+{endif}
+{if 1 - old_retract_length_toolchange > 2}
+G1 E2 F{old_filament_e_feedrate / 2}
+G1 E{1 - old_retract_length_toolchange - 2} F{old_filament_e_feedrate}
+{endif}
+; FLUSH_END
+_ENABLE_SENSOR
+M109 S[new_filament_temp]
+G1 X{x_after_toolchange} Y{y_after_toolchange} F18000
+G1 Z{z_after_toolchange}
+_RESTORE_GCODE_STATE_AFTER_FILAMENT_CHANGE
+{else}
+_NOPOOP_MODE ENABLE=1
+T[next_extruder]
+M109 S[new_filament_temp]
+{endif}
+{if layer_num == 1}
+SET_VELOCITY_LIMIT ACCEL=[initial_layer_acceleration]
+{else}
+SET_VELOCITY_LIMIT ACCEL=[default_acceleration]
+{endif}
+{else}
+T[next_extruder]
+{endif}
