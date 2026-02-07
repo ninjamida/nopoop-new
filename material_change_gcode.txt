@@ -1,7 +1,7 @@
 {if toolchange_count > 1}
 SET_VELOCITY_LIMIT ACCEL=[travel_acceleration]
 {if !purge_in_prime_tower && flush_length > 0}
-_NOPOOP_MODE ENABLE=0
+_COLOR_CHANGE_PARAMS NOPOOP_MODE=0 NEW_MATERIAL_TEMPERATURE=[new_filament_temp]
 T[next_extruder]
 _GOTO_TRASH
 M104 S[new_filament_temp]
@@ -79,9 +79,8 @@ _ENABLE_SENSOR
 M109 S[new_filament_temp]
 G1 X{x_after_toolchange} Y{y_after_toolchange} F18000
 G1 Z{z_after_toolchange}
-_RESTORE_GCODE_STATE_AFTER_FILAMENT_CHANGE
 {else}
-_NOPOOP_MODE ENABLE=1
+_COLOR_CHANGE_PARAMS NOPOOP_MODE=1 NEW_MATERIAL_TEMPERATURE=[new_filament_temp]
 T[next_extruder]
 M109 S[new_filament_temp]
 {endif}
