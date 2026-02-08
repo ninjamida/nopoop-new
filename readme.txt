@@ -7,7 +7,9 @@ For discussion:
 
 New features:
 - New mode, activated by USE_TRASH_ON_PRINT = 2. This mode allows you to toggle nopoop on or off in the slicer.
-  Additionally, when using poop in this mode, flush volumes are respected.
+  Additionally, when using poop in this mode, flush volumes are respected. (Purge to infill / etc do not work
+  in poop mode due to limitations of OrcaSlicer. It is possible to use these options in poop mode by using
+  Bambu Studio, but this is very experimental.)
 - Print head takes an "around the edges" route during color changes to avoid leakage getting on your prints.
 - When changing colors during the first few layers in nopoop mode, there is an option to make the nozzle rest in
   the poop chute during the change, despite not producing any poop. This is not enabled by default.
@@ -52,8 +54,19 @@ Printer settings, on the Machine G-Code tab, locate the "Change filament G-code"
 "material_change_gcode.txt" into it. To improve the accuracy of the slicer's print time estimates, on the Multimaterial
 tab, at the bottom, change both Filament load and unload time to zero, and set Tool change time to 55.
 
-The custom G-Code for Bambu Studio is not yet tested. Use at your own risk.
+--== USING BAMBU STUDIO ==--
 
+With this version of nopoop, you can use Bambu Studio instead of OrcaSlicer if you prefer. This is very experimental.
+Bambu Studio is only supported with USE_TRASH_ON_PRINT = 2, and only supports poop mode. (However, you can effectively
+achieve nopoop mode by providing sufficient spare objects for all purge to go to.) One upside is that Bambu Studio
+allows you to poop with custom flush volumes while also respecting purge to infill / etc.
+
+There is no preset in Bambu Studio for the AD5X. I suggest instead using a *non-Bambu* printer as a starting point and
+modifying the profile from there (I used the Creality K1). Note that for some reason, Bambu Studio does not let you
+edit the nozzle volume setting. You can edit it by opening the printer's config json file and changing it there - it
+does work.
+
+Note that Bambu Studio has different filament change gcode from OrcaSlicer, and also requires a custom start gcode.
 
 --== MODES ==--
 
@@ -81,7 +94,10 @@ When this is set to 2:
   
   Please note, you can only meaningfully use "Purge to object", "Purge to infill", etc when in nopoop mode. This is a
   restriction of the slicer - although it will alter the order in which it performs actions after the color change, it will
-  poop the same amount regardless of these settings. Flush volumes WILL be respected, though!
+  poop the same amount regardless of these settings. Flush volumes WILL be respected, though! This is a limitation of
+  OrcaSlicer, and can be bypassed by using Bambu Studio instead (however, Bambu Studio does not allow for any nopoop
+  mode); should OrcaSlicer fix this in a future update, it should "just work" with poop mode without any further update
+  to nopoop being necessary.
   
   It appears that it will be possible to use poop mode + purge to these other objects by using Bambu Studio instead of
   OrcaSlicer, but I am still investigating this option.
