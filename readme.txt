@@ -1,5 +1,5 @@
 Nopoop-New
-by Namida Verasche (aka ninjamida / Trumble)
+by Namida Verasche (aka ninjamida)
 
 For discussion:
 - https://github.com/ghzserg/zmod/discussions/443 (Nopoop improvements discussion on zMod github repo)
@@ -22,6 +22,7 @@ Fixes & Improvements:
   not quite 100%.)
 - Chaning filament_drop_length in filament.json no longer breaks color change behavior.
 
+
 --== INSTALL ==--
 
 zMod's dev has indicated he intends to eventually integrate this into zMod, but in the meantime, there are three files
@@ -39,6 +40,11 @@ to replace it, the important things to change are (for ALL filaments):
                         is pulled back into the 4-in-1 tube after unloading. Anyway, set it to 90 if you have the 4-in-1
                         tube style without the screw, or 120 if you have the one with it (or aren't sure).
                         
+If you intend to use USE_TRASH_ON_PRINT = 2, ideally, use the printer profiles provided here. They are preconfigured for
+use with that setting. If using these profiles *and* using zMod's feature to unload some filament before cutting, you
+should adjust the "Nozzle volume" setting, but aside from that, you can ignore the rest of this section if using the
+provided profiles - the remainder of this section is instructions for reconfiguring existing profiles.
+                        
 In the Printer settings in OrcaSlicer, set the "Nozzle Volume"; this enables more accurate auto-calculated flushing
 volumes. Calculate this via the following formula:
   144 - (filament_unload_before_cutting * 2.405)
@@ -54,19 +60,27 @@ Printer settings, on the Machine G-Code tab, locate the "Change filament G-code"
 "material_change_gcode.txt" into it. To improve the accuracy of the slicer's print time estimates, on the Multimaterial
 tab, at the bottom, change both Filament load and unload time to zero, and set Tool change time to 55.
 
+
 --== USING BAMBU STUDIO ==--
+
+!!! BAMBU STUDIO IS ONLY SUPPORTED WITH NATIVE SCREEN OFF AND USE_TRASH_ON_PRINT=2 !!!
+(You can probably make it work with other configurations, but you're on your own for that. You are welcome to use
+my profiles as a starting point.)
 
 With this version of nopoop, you can use Bambu Studio instead of OrcaSlicer if you prefer. This is very experimental.
 Bambu Studio is only supported with USE_TRASH_ON_PRINT = 2, and only supports poop mode. (However, you can effectively
 achieve nopoop mode by providing sufficient spare objects for all purge to go to.) One upside is that Bambu Studio
 allows you to poop with custom flush volumes while also respecting purge to infill / etc.
 
-There is no preset in Bambu Studio for the AD5X. I suggest instead using a *non-Bambu* printer as a starting point and
-modifying the profile from there (I used the Creality K1). Note that for some reason, Bambu Studio does not let you
-edit the nozzle volume setting. You can edit it by opening the printer's config json file and changing it there - it
-does work.
+There is no preset in Bambu Studio for the AD5X. You can use the provided printer profiles (you will need to install
+the Creality K1 0.4 profile first). If you wish to configure your own instead, you will need to base it off one of
+the existing printers - I suggest using a non-Bambu one, as the Bambu ones have a lot of gcode we don't want - and
+edit it to suit the AD5X. A copy of the start print and material change gcodes for Bambu Studio are provided - note
+that they are different from the OrcaSlicer ones!
 
-Note that Bambu Studio has different filament change gcode from OrcaSlicer, and also requires a custom start gcode.
+Note that for some reason, Bambu Studio does not let you edit the nozzle volume setting. You can edit it by opening
+the printer's config json file and changing it there; you will need to restart Bambu Studio afterwards.
+
 
 --== MODES ==--
 

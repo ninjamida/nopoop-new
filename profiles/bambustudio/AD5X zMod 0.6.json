@@ -1,0 +1,90 @@
+{
+    "bed_custom_model": "/app/share/BambuStudio/profiles/Creality/creality_k1_buildplate_model.stl",
+    "change_filament_gcode": "SET_FAN_SPEED FAN=fanM106 SPEED=0\nSET_VELOCITY_LIMIT ACCEL=[travel_acceleration]\nG1 X{x_after_toolchange} Y{y_after_toolchange} F18000\nG1 Z{z_after_toolchange}\n{if flush_length > 0}\n_COLOR_CHANGE_PARAMS NOPOOP_MODE=0 NEW_MATERIAL_TEMPERATURE=[new_filament_temp]\nT[next_extruder]\n_GOTO_TRASH\nM104 S[new_filament_temp]\nSET_FAN_SPEED FAN=fanM106 SPEED=0\n_DISABLE_SENSOR\n; FLUSH_START\n{if flush_length_1 == 0}\nG1 E2 F{old_filament_e_feedrate / 2}\nG1 E{flush_length + old_retract_length_toolchange - 2} F{old_filament_e_feedrate}\nSET_FAN_SPEED FAN=fanM106 SPEED=1\nG4 P4000\nM400\nG1 E-1 F{old_filament_e_feedrate / 2}\n_SBROS_TRASH\nSET_FAN_SPEED FAN=fanM106 SPEED=0\n{else}\nG1 E2 F{old_filament_e_feedrate / 2}\nG1 E{flush_length_1 + old_retract_length_toolchange - 2} F{old_filament_e_feedrate}\nSET_FAN_SPEED FAN=fanM106 SPEED=1\nG4 P4000\nM400\nG1 E-1 F{old_filament_e_feedrate / 2}\n_SBROS_TRASH\nSET_FAN_SPEED FAN=fanM106 SPEED=0\n{if flush_length_2 > 0}\n_GOTO_TRASH_STANDARD\nG1 E2 F{old_filament_e_feedrate / 2}\nG1 E{flush_length_2 - 1} F{old_filament_e_feedrate}\nSET_FAN_SPEED FAN=fanM106 SPEED=1\nG4 P4000\nM400\nG1 E-1 F{old_filament_e_feedrate / 2}\n_SBROS_TRASH\nSET_FAN_SPEED FAN=fanM106 SPEED=0\n{endif}\n{if flush_length_3 > 0}\n_GOTO_TRASH_STANDARD\nG1 E2 F{old_filament_e_feedrate / 2}\nG1 E{flush_length_3 - 1} F{old_filament_e_feedrate}\nSET_FAN_SPEED FAN=fanM106 SPEED=1\nG4 P4000\nM400\nG1 E-1 F{old_filament_e_feedrate / 2}\n_SBROS_TRASH\nSET_FAN_SPEED FAN=fanM106 SPEED=0\n{endif}\n{if flush_length_4 > 0}\n_GOTO_TRASH_STANDARD\nG1 E2 F{old_filament_e_feedrate / 2}\nG1 E{flush_length_4 - 1} F{old_filament_e_feedrate}\nSET_FAN_SPEED FAN=fanM106 SPEED=1\nG4 P4000\nM400\nG1 E-1 F{old_filament_e_feedrate / 2}\n_SBROS_TRASH\nSET_FAN_SPEED FAN=fanM106 SPEED=0\n{endif}\n{endif}\n{if 1 - old_retract_length_toolchange < -2}\nG1 E-2 F{old_filament_e_feedrate / 2}\nG1 E{1 - old_retract_length_toolchange + 2} F{old_filament_e_feedrate}\n{endif}\n{if 1 - old_retract_length_toolchange >= -2 and 1 - old_retract_length_toolchange < 0}\nG1 E{1 - old_retract_length_toolchange} F{old_filament_e_feedrate / 2}\n{endif}\n{if 1 - old_retract_length_toolchange > 0 and 1 - old_retract_length_toolchange <= 2}\nG1 E{1 - old_retract_length_toolchange} F{old_filament_e_feedrate / 2}\n{endif}\n{if 1 - old_retract_length_toolchange > 2}\nG1 E2 F{old_filament_e_feedrate / 2}\nG1 E{1 - old_retract_length_toolchange - 2} F{old_filament_e_feedrate}\n{endif}\n; FLUSH_END\n_ENABLE_SENSOR\nM109 S[new_filament_temp]\nG1 X{x_after_toolchange} Y{y_after_toolchange} F18000\nG1 Z{z_after_toolchange}\n{else}\n_COLOR_CHANGE_PARAMS NOPOOP_MODE=1 NEW_MATERIAL_TEMPERATURE=[new_filament_temp]\nT[next_extruder]\nM109 S[new_filament_temp]\n{endif}\n{if layer_num == 0}\nSET_VELOCITY_LIMIT ACCEL=[initial_layer_acceleration]\n{else}\nSET_VELOCITY_LIMIT ACCEL=[default_acceleration]\n{endif}{if layer_num < close_fan_the_first_x_layers[next_extruder]}\nSET_FAN_SPEED FAN=fanM106 SPEED=0\n{elsif layer_num >= full_fan_speed_layer[next_extruder] - 1}\nSET_FAN_SPEED FAN=fanM106 SPEED={ fan_min_speed[next_extruder] / 100}\n{else}\nSET_FAN_SPEED FAN=fanM106 SPEED={ fan_min_speed[next_extruder] * (layer_num - close_fan_the_first_x_layers[next_extruder] + 1) / (full_fan_speed_layer[next_extruder] - close_fan_the_first_x_layers[next_extruder]) / 100}\n{endif}",
+    "deretraction_speed": [
+        "45"
+    ],
+    "extruder_clearance_dist_to_rod": "29",
+    "extruder_clearance_height_to_lid": "130",
+    "extruder_clearance_height_to_rod": "26",
+    "extruder_clearance_max_radius": "58",
+    "from": "User",
+    "inherits": "Creality K1 0.4 nozzle",
+    "layer_change_gcode": ";AFTER_LAYER_CHANGE\n;[layer_z]\nSET_PRINT_STATS_INFO CURRENT_LAYER={layer_num + 1}",
+    "machine_max_acceleration_extruding": [
+        "8000",
+        "20000"
+    ],
+    "machine_max_acceleration_x": [
+        "8000",
+        "20000"
+    ],
+    "machine_max_acceleration_y": [
+        "8000",
+        "20000"
+    ],
+    "machine_max_jerk_x": [
+        "9",
+        "5"
+    ],
+    "machine_max_jerk_y": [
+        "9",
+        "5"
+    ],
+    "machine_max_jerk_z": [
+        "3",
+        "2"
+    ],
+    "machine_max_speed_e": [
+        "30",
+        "100"
+    ],
+    "machine_max_speed_x": [
+        "600",
+        "1000"
+    ],
+    "machine_max_speed_y": [
+        "600",
+        "1000"
+    ],
+    "machine_max_speed_z": [
+        "20",
+        "30"
+    ],
+    "machine_start_gcode": "START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single]\nSET_PRINT_STATS_INFO TOTAL_LAYER=[total_layer_count]\nT{initial_no_support_extruder}",
+    "machine_switch_extruder_time": "55",
+    "max_layer_height": [
+        "0.48"
+    ],
+    "min_layer_height": [
+        "0.12"
+    ],
+    "name": "AD5X zMod 0.6",
+    "nozzle_diameter": [
+        "0.6"
+    ],
+    "nozzle_volume": [
+        "144"
+    ],
+    "printable_height": "220",
+    "printer_extruder_id": [
+        "1"
+    ],
+    "printer_extruder_variant": [
+        "Direct Drive Standard"
+    ],
+    "printer_settings_id": "AD5X zMod 0.6",
+    "retract_before_wipe": [
+        "100%"
+    ],
+    "retraction_length": [
+        "2"
+    ],
+    "retraction_minimum_travel": [
+        "1"
+    ],
+    "retraction_speed": [
+        "45"
+    ],
+    "version": "2.0.0.2"
+}
