@@ -85,16 +85,17 @@ G1 E{1 - old_retract_length_toolchange - 2} F{old_filament_e_feedrate}
 {endif}
 ; FLUSH_END
 _ENABLE_SENSOR
-M109 S[new_filament_temp]
+TEMPERATURE_WAIT SENSOR=extruder MINIMUM=[new_filament_temp-2] MAXIMUM=[new_filament_temp+4]
 G1 X{x_after_toolchange} Y{y_after_toolchange} F18000
 G1 Z{z_after_toolchange}
 {else}
 _COLOR_CHANGE_PARAMS NOPOOP_MODE=1 NEW_MATERIAL_TEMPERATURE=[new_filament_temp]
 T[next_extruder]
-M109 S[new_filament_temp]
+TEMPERATURE_WAIT SENSOR=extruder MINIMUM=[new_filament_temp-2] MAXIMUM=[new_filament_temp+4]
 {endif}
 {if layer_num == 0}
 SET_VELOCITY_LIMIT ACCEL=[initial_layer_acceleration]
 {else}
 SET_VELOCITY_LIMIT ACCEL=[default_acceleration]
 {endif}
+SET_FAN_SPEED FAN=fanM106 SPEED={fan_min_speed[next_extruder] / 100}

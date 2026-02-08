@@ -36,6 +36,13 @@ to replace it, the important things to change are (for ALL filaments):
  > nozzle_clean_length: Note that this parameter's name is very misleading; it actually determines how far the filament
                         is pulled back into the 4-in-1 tube after unloading. Anyway, set it to 90 if you have the 4-in-1
                         tube style without the screw, or 120 if you have the one with it (or aren't sure).
+                        
+In the Printer settings in OrcaSlicer, set the "Nozzle Volume"; this enables more accurate auto-calculated flushing
+volumes. Calculate this via the following formula:
+  144 - (filament_unload_before_cutting * 2.405)
+  
+Filament_unload_before_cutting can be found in your filament.json file - if you're using the one from nopoop-new unmodified,
+or using zMod's default one aside from the above change, it's 0, and thus you should set this to 144.
 
 If you intend to continue using the existing USE_TRASH_ON_PRINT=0 behavior (or USE_TRASH_ON_PRINT=1, and you just want
 the incidental improvements here), then you are finished installing - it's time to move on to printing!
@@ -112,8 +119,7 @@ Poop mode (Mode 1, or Mode 2 with poop enabled) is recommended for the 0.25 nozz
 
 Nopoop mode (Mode 0, or Mode 2 with poop disabled) works well with PLA and ABS on a 0.4 or larger nozzle.
 
-When using poop mode, the flush volumes from the slicer with a 0.7 multiplier are generally adequate.
-
-When using nopoop mode, 25 should be added to these values, especially those that are <= 125.
+Flush volumes from the slicer with a 0.75 multiplier should be sufficient in most cases, if you've configured your
+nozzle volume as described in the install instructions.
 
 Trash skip height is best set to 1 for PETG, and 0.6 for any other material.
