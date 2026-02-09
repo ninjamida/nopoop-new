@@ -37,8 +37,12 @@ to replace it, the important things to change are (for ALL filaments):
  > filament_unload_before_cutting: Recommended value 20, don't go much higher than that. Might be safer to use a lower
                                    value, or even zero, for TPU. Higher values save filament.
  > nozzle_clean_length: Note that this parameter's name is very misleading; it actually determines how far the filament
-                        is pulled back into the 4-in-1 tube after unloading. Anyway, set it to 90 if you have the 4-in-1
-                        tube style without the screw, or 120 if you have the one with it (or aren't sure).
+                        is pulled back into the 4-in-1 tube after unloading. Anyway, set it to 70 if you have the 4-in-1
+                        tube style without the screw, or 100 if you have the one with it (or aren't sure).
+ > filament_unload_speed: Double your existing values. The reason for this is that zMod's existing code doubles the value
+                          when retracting with the IFS alone; since this is the majority of unload, it makes more sense
+                          for this speed to be natively specified (and other values based on it to be halved, instead of
+                          this one doubled).
                         
 If you intend to use USE_TRASH_ON_PRINT = 2, ideally, use the printer profiles provided here. They are preconfigured for
 use with that setting. If using these profiles *and* using zMod's feature to unload some filament before cutting, you
