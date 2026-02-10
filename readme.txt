@@ -25,8 +25,8 @@ Fixes & Improvements:
 
 --== INSTALL ==--
 
-zMod's dev has indicated he intends to eventually integrate this into zMod, but in the meantime, there are three files
-to install - two for the printer, one for the slicer.
+zMod's dev has indicated he intends to eventually integrate this into zMod, but in the meantime, there are two files to
+install on the printer.
 
 "nopoop-new.cfg" should be copied into your mod_data folder. Then, you need to edit your user.cfg file, also in the mod_data
 folder - if you do not have one, create it (you do not need to add anything else to it). Add the following line:
@@ -44,32 +44,38 @@ to replace it, the important things to change are (for ALL filaments):
                           for this speed to be natively specified (and other values based on it to be halved, instead of
                           this one doubled).
                         
-If you intend to use USE_TRASH_ON_PRINT = 2, ideally, use the printer profiles provided here. They are preconfigured for
-use with that setting. If using these profiles *and* using zMod's feature to unload some filament before cutting, you
-should adjust the "Nozzle volume" setting, but aside from that, you can ignore the rest of this section if using the
-provided profiles - the remainder of this section is instructions for reconfiguring existing profiles.
+Ideally, you can use the provided printer profiles. These cover all four options - native screen, zMod-controlled poop
+(USE_TRASH_ON_PRINT=1), nopoop, and slicer-controlled poop; and also contain some custom start and filament change gcode
+to verify settings and improve the behavior of the color change process. (Note that custom gcode is NOT required except
+when using USE_TRASH_ON_PRINT=2.)
                         
-In the Printer settings in OrcaSlicer, set the "Nozzle Volume"; this enables more accurate auto-calculated flushing
-volumes. Calculate this via the following formula:
+If you have adjusted filament_unload_before_cutting in your filament.json, in the Printer settings in OrcaSlicer, adjust the
+"Nozzle Volume"; this enables more accurate auto-calculated flushing volumes. Calculate this via the following formula:
   144 - (filament_unload_before_cutting * 2.405)
   
-Filament_unload_before_cutting can be found in your filament.json file - if you're using the one from nopoop-new unmodified,
-or using zMod's default one aside from the above change, it's 0, and thus you should set this to 144.
+The provided profiles are close to the stock AD5X profiles, with the following differences:
+- Nozzle volume set to 144 (correct value if filament_unload_before_cutting is zero, and a safe value if it isn't)
+- zMod start GCode in place, with additions to check the correct native screen / use_trash_on_print settings are in place
+- Filament change GCode to allow max acceleration during filament swaps, and set it back afterwards
+- For slicer-controlled poop (USE_TRASH_ON_PRINT=2), the filament change GCode to control this poop is in place
+- Z-Hop type set to Normal
 
-If you intend to continue using the existing USE_TRASH_ON_PRINT=0 behavior (or USE_TRASH_ON_PRINT=1, and you just want
-the incidental improvements here), then you are finished installing - it's time to move on to printing!
+There are many debatable changes that should or shouldn't be put in as defaults. I decided to avoid that debate and skip
+most of these - but you can absolutely modify them with your own changes if you like. A good way to do this is open two
+instances of OrcaSlicer at the same time, edit the new profile in one and your existing profile in the other, and look
+for any fields that are highlighted to indicate they're not default values.
 
-If you intend to use the new USE_TRASH_ON_PRINT=2 behavior, you need to add some custom GCode into OrcaSlicer. In the
-Printer settings, on the Machine G-Code tab, locate the "Change filament G-code" and copy-paste the entire contents of
-"material_change_gcode.txt" into it. To improve the accuracy of the slicer's print time estimates, on the Multimaterial
-tab, at the bottom, change both Filament load and unload time to zero, and set Tool change time to 55.
+Regarding the check for use_trash_on_print settings, unless you disable it, these will automatically be changed to the
+correct ones when starting a print from these profiles. Therefore, except for the native screen vs non-native screen, you
+can simply select the right profile and the start gcode will take care of switching the use_trash_on_print mode.
 
 
 --== USING BAMBU STUDIO ==--
 
 !!! BAMBU STUDIO IS ONLY SUPPORTED WITH NATIVE SCREEN OFF AND USE_TRASH_ON_PRINT=2 !!!
 (You can probably make it work with other configurations, but you're on your own for that. You are welcome to use
-my profiles as a starting point.)
+my profiles as a starting point. The start gcode will check for this configuration if you are using the provided
+profiles.)
 
 With this version of nopoop, you can use Bambu Studio instead of OrcaSlicer if you prefer. This is very experimental.
 Bambu Studio is only supported with USE_TRASH_ON_PRINT = 2, and only supports poop mode. (However, you can effectively
@@ -123,6 +129,11 @@ When this is set to 2:
 
 --== USAGE ==--
 
+The easiest way to use this is to use the provided profiles (you can alter most of the settings, just leave the start gcode
+and filament change gcode alone if you don't know what you're doing; *adding* to the start gcode is fine), and leave the
+option to auto-change settings enabled. This way, aside from turning the native screen on or off as applicable for the
+profile you're using, you can simply choose the appropriate profile for how you want to print, and let it "just work".
+
 If you are already using mode 0 or mode 1, and intend to continue using that mode, you do not need to do anything different.
 Enjoy the small improvements. If you are not an existing user of nopoop, but intend to use mode 1, you also do not need to
 do anything different from what you already are (provided that what you're already doing works with zMod in general).
@@ -157,3 +168,23 @@ Flush volumes from the slicer with a 0.75 multiplier should be sufficient in mos
 nozzle volume as described in the install instructions.
 
 Trash skip height is best set to 1 for PETG, and 0.6 for any other material.
+
+
+--== CONFIGURATION VARIABLES ==--
+
+These can be set via SAVE_VARIABLES VARIABLE=[name] VALUE=[value]
+
+nopoop_trash_skip_height            | When in nopoop mode, the printer will still go to the trash when the print is below
+                                    | this height, during color changes. 0 to disable, >220 for always.
+------------------------------------+---------------------------------------------------------------------------------------
+use_trash_on_print                  | (Existing zMod variable). Existing behavior is maintained for values of 0 and 1; new
+                                    | behavior is unlocked by setting this to 2.
+------------------------------------+---------------------------------------------------------------------------------------
+validate_print_settings_auto_change | Determines what will happen if _VALIDATE_PRINT_SETTINGS is called with parameters that
+                                    | do not match the current printer configuration. (This macro is never called by zMod or
+                                    | nopoop itself; it exists for the benefit of custom slicer gcode. The provided print
+                                    | profiles do use it.)
+                                    |  -1 : Emit a warning to the console, but continue with the print
+                                    |   0 : Abort the print and show an error
+                                    |   1 : Change the settings to the correct ones (cannot change display_on/off, will
+                                    |       abort the print and show an error if that mismatches)                                    
