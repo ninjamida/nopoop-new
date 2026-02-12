@@ -1,3 +1,7 @@
+FURTHER DEVELOPMENT ON THIS REPO WILL BE FOR PRINT PROFILES ONLY
+FUTURE UPDATES WILL BE HERE AND INTEGRATED INTO ZMOD CODE: https://github.com/ninjamida/zmod_base/tree/nopoop-new
+
+
 Nopoop-New
 by Namida Verasche (aka ninjamida)
 
