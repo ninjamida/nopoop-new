@@ -1,0 +1,24 @@
+This G-Code is optional. You can simply use the standard zMod start G-Code and leave change filament blank if you want.
+
+--== Start G-Code ==--
+_VALIDATE_PRINT_SETTINGS CHECK_SCREEN=1
+START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single]
+M190 S[bed_temperature_initial_layer_single]
+M104 S[nozzle_temperature_initial_layer]
+SET_PRINT_STATS_INFO TOTAL_LAYER=[total_layer_count]
+
+
+
+--== Change Filament G-Code ==--
+{if toolchange_count > 1}
+SET_VELOCITY_LIMIT ACCEL=[travel_acceleration]
+T[next_extruder]
+M109 S[new_filament_temp]
+{if layer_num == 0}
+SET_VELOCITY_LIMIT ACCEL=[initial_layer_acceleration]
+{else}
+SET_VELOCITY_LIMIT ACCEL=[default_acceleration]
+{endif}
+{else}
+T[next_extruder]
+{endif}

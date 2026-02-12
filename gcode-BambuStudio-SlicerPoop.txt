@@ -1,8 +1,19 @@
-{if toolchange_count > 1}
-M104 S[old_filament_temp]
+You can leave out the _VALIDATE_PRINT_SETTINGS line if you want but all other Studio G-Code is required.
+
+--== START PRINT ==--
+_VALIDATE_PRINT_SETTINGS CHECK_SCREEN=0 CHECK_TRASH=2
+START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single]
+SET_PRINT_STATS_INFO TOTAL_LAYER=[total_layer_count]
+T{initial_no_support_extruder}
+
+
+
+--== Change Filament G-Code ==--
 SET_FAN_SPEED FAN=fanM106 SPEED=0
 SET_VELOCITY_LIMIT ACCEL=[travel_acceleration]
-{if !purge_in_prime_tower && flush_length > 0}
+G1 X{x_after_toolchange} Y{y_after_toolchange} F18000
+G1 Z{z_after_toolchange}
+{if flush_length > 0}
 _COLOR_CHANGE_PARAMS NOPOOP_MODE=0 NEW_MATERIAL_TEMPERATURE=[new_filament_temp]
 T[next_extruder]
 _GOTO_TRASH
@@ -90,14 +101,10 @@ M109 S[new_filament_temp]
 SET_VELOCITY_LIMIT ACCEL=[initial_layer_acceleration]
 {else}
 SET_VELOCITY_LIMIT ACCEL=[default_acceleration]
-{endif}
-{if layer_num < close_fan_the_first_x_layers[next_extruder]}
+{endif}{if layer_num < close_fan_the_first_x_layers[next_extruder]}
 SET_FAN_SPEED FAN=fanM106 SPEED=0
 {elsif layer_num >= full_fan_speed_layer[next_extruder] - 1}
 SET_FAN_SPEED FAN=fanM106 SPEED={ fan_min_speed[next_extruder] / 100}
 {else}
 SET_FAN_SPEED FAN=fanM106 SPEED={ fan_min_speed[next_extruder] * (layer_num - close_fan_the_first_x_layers[next_extruder] + 1) / (full_fan_speed_layer[next_extruder] - close_fan_the_first_x_layers[next_extruder]) / 100}
-{endif}
-{else}
-T[next_extruder]
 {endif}
